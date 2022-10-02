@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "202048725293",
+    "project_id": "ridee-92a7e",
+    "storage_bucket": "ridee-92a7e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:202048725293:android:ab907c03d4883593d973a4",
+        "android_client_info": {
+          "package_name": "com.example.ridee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "202048725293-5v9f3nn836b3ndagcc3ou7h4p8k5ndba.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByd407WaoCP_NUrC6OVHJ0lOqtcHImk_s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "202048725293-5v9f3nn836b3ndagcc3ou7h4p8k5ndba.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
