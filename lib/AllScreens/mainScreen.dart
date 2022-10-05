@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:ridee/Helpers/assistantMethods.dart';
+import 'package:ridee/Provider/appdata.dart';
 import 'package:ridee/Widgets/Divider.dart';
 import 'package:ridee/Widgets/Drawer.dart';
 import 'package:geolocator/geolocator.dart';
-
 
 
 class MainScreen extends StatefulWidget {
@@ -40,7 +42,8 @@ class _MainScreenState extends State<MainScreen> {
 
       }
       else{
-        Position position =await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+        Position position =await Geolocator.
+        getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
         currentPosition= position;
 
         LatLng latLngPosition=LatLng(position.latitude, position.longitude);
@@ -48,7 +51,9 @@ class _MainScreenState extends State<MainScreen> {
         CameraPosition cameraPosition=new CameraPosition(target: latLngPosition,zoom: 14.4746,);
         newGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
-
+        String address = await AssistantMethods.searchAddressForGeographicCoOrdinates(position, context);
+        print("address##############");
+        print(address);
         setState(() {
           bottomPadding=300.0;
         });
@@ -182,7 +187,8 @@ class _MainScreenState extends State<MainScreen> {
                           ),
                           Column(
                             children: [
-                              Text("Add Home"),
+                              Text(  Provider.of<AppData>(context).userPickUpLocation != null
+                                  ? (Provider.of<AppData>(context).userPickUpLocation!.placeName!): "Add Home"),
                               SizedBox(
                                 width: 10.0,
                               ),
