@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:ridee/AllScreens/searchScreen.dart';
 import 'package:ridee/Helpers/assistantMethods.dart';
 import 'package:ridee/Provider/appdata.dart';
 import 'package:ridee/Widgets/Divider.dart';
@@ -127,27 +128,32 @@ class _MainScreenState extends State<MainScreen> {
                       SizedBox(
                         height: 20.0,
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black54,
-                                blurRadius: 6.0,
-                                spreadRadius: 0.4,
-                                offset: Offset(1, 1),
-                              )
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>SearchScreen()));
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5.0),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black54,
+                                  blurRadius: 6.0,
+                                  spreadRadius: 0.4,
+                                  offset: Offset(1, 1),
+                                )
+                              ]),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(children: [
+                              Icon(Icons.search, color: Colors.teal),
+                              SizedBox(
+                                width: 10.0,
+                              ),
+                              Text("Search Destination."),
                             ]),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(children: [
-                            Icon(Icons.search, color: Colors.teal),
-                            SizedBox(
-                              width: 10.0,
-                            ),
-                            Text("Search Destination."),
-                          ]),
+                          ),
                         ),
                       ),
                       SizedBox(
