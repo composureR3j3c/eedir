@@ -51,7 +51,8 @@ class _MainScreenState extends State<MainScreen> {
         CameraPosition cameraPosition=new CameraPosition(target: latLngPosition,zoom: 14.4746,);
         newGoogleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
-        String address = await AssistantMethods.searchAddressForGeographicCoOrdinates(position, context);
+
+        final address = await AssistantMethods.searchAddressForGeographicCoOrdinates(position, context);
         print("address##############");
         print(address);
         setState(() {

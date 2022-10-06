@@ -8,35 +8,39 @@ import '../Provider/appdata.dart';
 import 'callApi.dart';
 
 class AssistantMethods {
-  static Future<String> searchAddressForGeographicCoOrdinates(Position position,
+  static Future<dynamic> searchAddressForGeographicCoOrdinates(Position position,
       context) async
   {
     // String apiUrl = "https://maps.googleapis.com/maps/api/geocode/json?latlng=${position
     //     .latitude},${position.longitude}&key=$mapKey";
 
     String apiUrl = "https://api.geoapify.com/v1/geocode/reverse?lat=${position.latitude}&lon=${position.longitude}&apiKey=$geopify";
-    String humanReadableAddress = "";
-    dynamic geofyHumanReadableAddress = "";
+    // String humanReadableAddress = "";
+    String geofyHumanReadableAddress = "";
 
-    var requestResponse = await RequestAssistant.receiveRequest(apiUrl);
+    final requestResponse = await RequestAssistant.receiveRequest(apiUrl);
 
-    print("requestResponse"+requestResponse);
+    // print("requestResponse"+requestResponse);
     if (requestResponse != "Error Occurred, Failed. No Response.") {
       // humanReadableAddress = requestResponse["results"][0]["formatted_address"];
-      geofyHumanReadableAddress = requestResponse["type"];
-      // geofyHumanReadableAddress = requestResponse["features"][0]["properties"]["name"];
+
+      geofyHumanReadableAddress = requestResponse["features"][0]["properties"]["name"];
+      geofyHumanReadableAddress = requestResponse["features"][0]["properties"]["street"];
+      geofyHumanReadableAddress = requestResponse["features"][0]["properties"]["city"];
+      geofyHumanReadableAddress = requestResponse["features"][0]["properties"]["country"];
       print(" #####geofyHumanReadableAddress##### "+geofyHumanReadableAddress);
       //
       Address userPickUpAddress = Address();
       userPickUpAddress.latitude = position.latitude;
       userPickUpAddress.longitude = position.longitude;
       userPickUpAddress.placeName = geofyHumanReadableAddress;
+      print(" #####userPickUpAddress##### "+ userPickUpAddress!.placeName!);
       //
       Provider.of<AppData>(context, listen: false).updatePickUpLocationAddress(
           userPickUpAddress);
     }
 
-    return humanReadableAddress;
+    return geofyHumanReadableAddress;
   }
 
 }
