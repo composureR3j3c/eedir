@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ridee/Provider/appdata.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -8,8 +10,16 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+
+  TextEditingController pickUpTextEditingController= TextEditingController();
+  TextEditingController dropOffTextEditingController= TextEditingController();
   @override
   Widget build(BuildContext context) {
+
+    String placeAddress= Provider.of<AppData>(context).userPickUpLocation!.placeName ?? "";
+    pickUpTextEditingController.text=placeAddress;
+
+
     return Scaffold(
       body: Column(
         children: [
