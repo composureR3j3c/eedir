@@ -16,7 +16,8 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
 
-    String placeAddress= Provider.of<AppData>(context).userPickUpLocation!.placeName ?? "";
+    // String placeAddress= Provider.of<AppData>(context).userPickUpLocation!.placeName! ?? "";
+    String placeAddress="";
     pickUpTextEditingController.text=placeAddress;
 
 
@@ -41,7 +42,7 @@ class _SearchScreenState extends State<SearchScreen> {
             child: Column(
               children: [
                 SizedBox(
-                  height: 5.0,
+                  height: 50.0,
                 ),
                 Stack(
                   children: [
