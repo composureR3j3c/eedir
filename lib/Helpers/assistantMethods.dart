@@ -15,7 +15,7 @@ class AssistantMethods {
     String apiUrl =
         "https://api.geoapify.com/v1/geocode/reverse?lat=${position.latitude}&lon=${position.longitude}&apiKey=$geopify";
     // String humanReadableAddress = "";
-    String geofyHumanReadableAddress = "";
+    String? geofyHumanReadableAddress = "";
 
     final requestResponse = await RequestAssistant.receiveRequest(apiUrl);
 
@@ -23,14 +23,27 @@ class AssistantMethods {
     if (requestResponse != "Error Occurred, Failed. No Response.") {
       // humanReadableAddress = requestResponse["results"][0]["formatted_address"];
 
+      String? name = requestResponse["features"][0]["properties"]["name"] ?? "";
+      ;
       geofyHumanReadableAddress =
-          requestResponse["features"][0]["properties"]["name"];
-      geofyHumanReadableAddress =
-          requestResponse["features"][0]["properties"]["street"];
-      geofyHumanReadableAddress =
-          requestResponse["features"][0]["properties"]["city"];
-      geofyHumanReadableAddress =
-          requestResponse["features"][0]["properties"]["country"];
+          requestResponse["features"][0]["properties"]["road"] ?? "";
+      String? street =
+          requestResponse["features"][0]["properties"]["county"] ?? "";
+      String? city =
+          requestResponse["features"][0]["properties"]["state"] ?? "";
+      String? country =
+          requestResponse["features"][0]["properties"]["country"] ?? "";
+
+      geofyHumanReadableAddress = geofyHumanReadableAddress! +
+          " " +
+          name! +
+          ", " +
+          street! +
+          ", " +
+          city! +
+          ", " +
+          country! +
+          ".";
       print(
           " #####geofyHumanReadableAddress##### " + geofyHumanReadableAddress);
       //
@@ -45,5 +58,11 @@ class AssistantMethods {
     }
 
     return geofyHumanReadableAddress;
+  }
+
+  static Future<dynamic> searchAutoComplete(Position position, context) async {
+    String place = "";
+    String apiUrl =
+        "https://api.geoapify.com/v1/geocode/autocomplete?text=$place&format=json&filter=countrycode:et&circle:-38.763611,9.005401,1&apiKey=$geopify";
   }
 }

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ridee/Helpers/callApi.dart';
+import 'package:ridee/Models/placePrediction.dart';
+import 'package:ridee/Widgets/Divider.dart';
 
 import '../Provider/appdata.dart';
+import '../Widgets/PredictionTile.dart';
+import 'configMaps.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -13,6 +18,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   TextEditingController pickUpTextEditingController = TextEditingController();
   TextEditingController dropOffTextEditingController = TextEditingController();
+  List<PlacePredictions> placesPredictionList = [];
   @override
   Widget build(BuildContext context) {
     String? placeAddress =
@@ -119,6 +125,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         child: Padding(
                           padding: EdgeInsets.all(3.0),
                           child: TextField(
+                            onChanged: (val) => findPlace(val),
                             controller: dropOffTextEditingController,
                             decoration: InputDecoration(
                               hintText: "Where To?",
@@ -137,9 +144,47 @@ class _SearchScreenState extends State<SearchScreen> {
                 ],
               ),
             ),
-          )
+          ),
+          (placesPredictionList.length > 0)
+              ? Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  child: ListView.separated(
+                    itemBuilder: (context, index) => PredictionTile(
+                      placePredictions: placesPredictionList[index],
+                    ),
+                    separatorBuilder: (BuildContext context, int Index) =>
+                        DividerWidget(),
+                    itemCount: placesPredictionList.length,
+                    shrinkWrap: true,
+                    physics: ClampingScrollPhysics(),
+                  ),
+                )
+              : Container(),
         ],
       ),
     );
+  }
+
+  void findPlace(String Placename) async {
+    if (Placename.length > 1) {
+      String apiUrl =
+          "https://api.geoapify.com/v1/geocode/autocomplete?text=$Placename&format=json&filter=countrycode:et&circle:-38.763611,9.005401,1&apiKey=$geopify";
+
+      var res = await RequestAssistant.receiveRequest(apiUrl);
+      if (res == "Error Occurred, Failed. No Response.") {
+        return;
+      } else
+      // if (res["status"] == "OK")
+      {
+        print(res["results"]);
+        var predictions = res["results"];
+        var placeList = (predictions as List)
+            .map((e) => PlacePredictions.fromJson(e))
+            .toList();
+        setState(() {
+          placesPredictionList = placeList;
+        });
+      }
+    }
   }
 }
