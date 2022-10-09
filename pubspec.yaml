@@ -41,6 +41,8 @@ dependencies:
   geolocator: ^9.0.2
   http: ^0.13.5
   provider: ^6.0.3
+  flutter_polyline_points: ^1.0.0
+  font_awesome_flutter: ^10.2.1
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +70,7 @@ flutter:
   assets:
     - images/pickicon.png
     - images/desticon.png
+    - images/taxi.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
