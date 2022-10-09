@@ -15,16 +15,18 @@ class _SearchScreenState extends State<SearchScreen> {
   TextEditingController dropOffTextEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    String placeAddress =
-        Provider.of<AppData>(context).userPickUpLocation!.placeName! ?? "";
+    String? placeAddress =
+        Provider.of<AppData>(context).userPickUpLocation != null
+            ? (Provider.of<AppData>(context).userPickUpLocation?.placeName!)
+            : "";
     // String placeAddress = "";
-    pickUpTextEditingController.text = placeAddress;
+    pickUpTextEditingController.text = placeAddress!;
 
     return Scaffold(
       body: Column(
         children: [
           Container(
-            height: 215,
+            height: 255,
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -66,7 +68,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   Row(
                     children: [
                       Image.asset(
-                        "images/pickupicon.png",
+                        "images/pickicon.png",
                         height: 16.0,
                         width: 16.0,
                       ),
