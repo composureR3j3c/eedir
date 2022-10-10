@@ -2,8 +2,8 @@ class PlacePredictions {
   String? secondaryText;
   String? mainText;
   String? placeId;
-  String? lat;
-  String? lon;
+  double? lat;
+  double? lon;
 
   PlacePredictions(
       {this.secondaryText, this.mainText, this.placeId, this.lat, this.lon});

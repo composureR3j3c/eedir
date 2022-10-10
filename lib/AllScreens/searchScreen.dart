@@ -146,19 +146,19 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ),
           (placesPredictionList.length > 0)
-              ? Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  child: ListView.separated(
-                    itemBuilder: (context, index) => PredictionTile(
-                      placePredictions: placesPredictionList[index],
+              ? Expanded(
+                    child: ListView.separated(
+                      itemBuilder: (context, index) => PredictionTile(
+                        placePredictions: placesPredictionList[index],
+                      ),
+                      separatorBuilder: (BuildContext context, int Index) =>
+                          DividerWidget(),
+                      itemCount: placesPredictionList.length,
+                      shrinkWrap: true,
+
+                      physics: ClampingScrollPhysics(),
                     ),
-                    separatorBuilder: (BuildContext context, int Index) =>
-                        DividerWidget(),
-                    itemCount: placesPredictionList.length,
-                    shrinkWrap: true,
-                    physics: ClampingScrollPhysics(),
-                  ),
-                )
+                  )
               : Container(),
         ],
       ),

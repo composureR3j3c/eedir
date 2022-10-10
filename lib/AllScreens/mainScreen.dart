@@ -305,11 +305,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                           child: Row(
                             children: [
                               Icon(
-                                FontAwesomeIcons.moneyCheck,
+                                FontAwesomeIcons.moneyBill1,
                                 color: Colors.black54,
                               ),
                               SizedBox(
-                                height: 16.0,
+                                width: 16.0,
                               ),
                               Text("Cash"),
                               SizedBox(
