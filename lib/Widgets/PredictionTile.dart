@@ -43,7 +43,7 @@ class _PredictionTileState extends State<PredictionTile> {
                       widget.placePredictions.mainText ?? "",
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.left,
-                      style: TextStyle(fontSize: 16.0),
+                      style: TextStyle(fontSize: 16.0, color: Colors.black),
                     ),
                     SizedBox(
                       width: 2.0,
@@ -52,9 +52,7 @@ class _PredictionTileState extends State<PredictionTile> {
                       widget.placePredictions.secondaryText ?? "",
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 13.0,
-                      ),
+                      style: TextStyle(fontSize: 13.0, color: Colors.black45),
                     ),
                     SizedBox(
                       width: 8.0,
@@ -73,13 +71,13 @@ class _PredictionTileState extends State<PredictionTile> {
   }
 
   void setDropOff(PlacePredictions placePredictions, BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-              content: Container(
-                child: Text("Setting DropOff, Please wait..."),
-              ),
-            ));
+    // showDialog(
+    //     context: context,
+    //     builder: (BuildContext context) => AlertDialog(
+    //           content: Container(
+    //             child: Text("Setting DropOff, Please wait..."),
+    //           ),
+    //         ));
 
     Address address = Address();
     address.latitude = placePredictions.lat as double?;
@@ -90,6 +88,6 @@ class _PredictionTileState extends State<PredictionTile> {
     print("#####drop off #####");
     print(address.placeName);
 
-    Navigator.pop(context);
+    Navigator.pop(context, "obtainDirection");
   }
 }

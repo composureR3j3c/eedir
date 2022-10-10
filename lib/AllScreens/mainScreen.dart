@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:ridee/AllScreens/searchScreen.dart';
 import 'package:ridee/Helpers/assistantMethods.dart';
+import 'package:ridee/Models/directDetails.dart';
 import 'package:ridee/Provider/appdata.dart';
 import 'package:ridee/Widgets/Divider.dart';
 import 'package:ridee/Widgets/Drawer.dart';
@@ -33,6 +34,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   double bottomPadding = 0;
   double rideDetailContainerHeight = 0;
   double searchContainerHeight = 320;
+
+  late DirectDetails tripDirectDetails;
 
   void displayRideDetail() async {
     // await getDirections();
@@ -144,12 +147,15 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                           height: 20.0,
                         ),
                         GestureDetector(
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                            var res = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => SearchScreen()));
-                            displayRideDetail();
+                            if (res == "obtainDirection") {
+                              await getPlaceDirections();
+                              displayRideDetail();
+                            }
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -289,11 +295,22 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                           fontFamily: "Brand-Bold"),
                                     ),
                                     Text(
-                                      "10Km",
+                                      (tripDirectDetails != null)
+                                          ? tripDirectDetails.distance
+                                              .toString()
+                                          : "5km",
                                       style: TextStyle(
                                           fontSize: 18.2,
                                           fontFamily: "Brand-Bold"),
                                     ),
+                                    Expanded(
+                                        child: Container(
+                                      child: Text((tripDirectDetails != null)
+                                          ? AssistantMethods.calcualateFares(
+                                                  tripDirectDetails)
+                                              .toString()
+                                          : ""),
+                                    ))
                                   ],
                                 )
                               ],
@@ -362,5 +379,26 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  Future<void> getPlaceDirections() async {
+    var initialPosition =
+        Provider.of<AppData>(context, listen: false).userPickUpLocation;
+    var finalPosition =
+        Provider.of<AppData>(context, listen: false).dropOffLocation;
+
+    var pickupLatlng =
+        LatLng(initialPosition!.latitude!, initialPosition!.longitude!);
+    var dropOffLatlng =
+        LatLng(finalPosition!.latitude!, finalPosition!.longitude!);
+
+    // showDialog(context: context, builder: (BuildContext context)=>ProgressDialog(type:ProgressDialogType.Normal).style(message: "Please Wait...")  }
+
+    var details =
+        await AssistantMethods.obtainDirection(pickupLatlng, dropOffLatlng);
+    setState(() {
+      tripDirectDetails = details;
+    });
+    // Navigator.pop(context);
   }
 }

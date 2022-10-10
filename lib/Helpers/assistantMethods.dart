@@ -1,6 +1,8 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:ridee/Models/address.dart';
+import 'package:ridee/Models/directDetails.dart';
 
 import '../AllScreens/configMaps.dart';
 import '../Provider/appdata.dart';
@@ -64,5 +66,28 @@ class AssistantMethods {
     String place = "";
     String apiUrl =
         "https://api.geoapify.com/v1/geocode/autocomplete?text=$place&format=json&filter=countrycode:et&circle:-38.763611,9.005401,1&apiKey=$geopify";
+  }
+
+  static Future<dynamic> obtainDirection(
+      LatLng initialPos, LatLng finalPos) async {
+    String apiUrl =
+        "https://api.geoapify.com/v1/routing?waypoints=47.774732,9.027492|47.789538,9.0549636&mode=bicycle&details=route_details&apiKey=d548c5ed24604be6a9dd0d989631f783";
+
+    final requestResponse = await RequestAssistant.receiveRequest(apiUrl);
+
+    if (requestResponse != "Error Occurred, Failed. No Response.") {
+      DirectDetails directDetails = DirectDetails();
+
+      directDetails.distance =
+          requestResponse["features"][0]["properties"]["distance"];
+      directDetails.time = requestResponse["features"][0]["properties"]["time"];
+
+      return directDetails;
+    }
+  }
+
+  static int calcualateFares(DirectDetails directDetails) {
+    double Fare = directDetails.distance! / 100;
+    return Fare.truncate();
   }
 }
