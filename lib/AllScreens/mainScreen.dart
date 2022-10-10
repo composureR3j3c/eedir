@@ -97,6 +97,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
               locatePosition();
             },
+            onCameraMove: (position) {
+              locatePosition();
+            },
           ),
           Positioned(
               left: 0.0,
