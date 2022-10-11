@@ -30,8 +30,16 @@ class _PredictionTileState extends State<PredictionTile> {
             ),
             Row(
               children: [
+                SizedBox(
+                  width: 15.0,
+                ),
                 Icon(
                   Icons.add_location,
+                  color: Colors.red,
+                  size: 50,
+                ),
+                SizedBox(
+                  width: 20,
                 ),
                 Expanded(
                     child: Column(
@@ -39,20 +47,26 @@ class _PredictionTileState extends State<PredictionTile> {
                     SizedBox(
                       width: 8.0,
                     ),
-                    Text(
-                      widget.placePredictions.mainText ?? "",
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(fontSize: 16.0, color: Colors.black),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.placePredictions.mainText ?? "",
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(fontSize: 16.0, color: Colors.black),
+                      ),
                     ),
                     SizedBox(
                       width: 2.0,
                     ),
-                    Text(
-                      widget.placePredictions.secondaryText ?? "",
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(fontSize: 13.0, color: Colors.black45),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.placePredictions.secondaryText ?? "",
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(fontSize: 13.0, color: Colors.black45),
+                      ),
                     ),
                     SizedBox(
                       width: 8.0,
@@ -86,11 +100,9 @@ class _PredictionTileState extends State<PredictionTile> {
 
     Provider.of<AppData>(context, listen: false).updateDropOffLocation(address);
     print("#####drop off #####");
-    print(address.placeName);
+    print(address.latitude);
 
-    setState(() {
-
-    });
+    setState(() {});
     Navigator.pop(context, "obtainDirection");
   }
 }

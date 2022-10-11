@@ -55,7 +55,9 @@ class _SearchScreenState extends State<SearchScreen> {
                   Stack(
                     children: [
                       GestureDetector(
-                        child: Icon(Icons.arrow_back),
+                        child: Icon(
+                          Icons.arrow_back,
+                        ),
                         onTap: () {
                           Navigator.pop(context);
                         },
@@ -75,11 +77,11 @@ class _SearchScreenState extends State<SearchScreen> {
                     children: [
                       Image.asset(
                         "images/pickicon.png",
-                        height: 16.0,
-                        width: 16.0,
+                        height: 28.0,
+                        width: 28.0,
                       ),
                       SizedBox(
-                        height: 18.0,
+                        width: 15.0,
                       ),
                       Expanded(
                           child: Container(
@@ -92,12 +94,15 @@ class _SearchScreenState extends State<SearchScreen> {
                             controller: pickUpTextEditingController,
                             decoration: InputDecoration(
                               hintText: "Pickup Loction",
-                              fillColor: Colors.grey[400],
+                              fillColor: Colors.grey[200],
                               filled: true,
                               border: InputBorder.none,
                               isDense: true,
                               contentPadding: EdgeInsets.only(
-                                  left: 11.0, top: 8.0, bottom: 8.0),
+                                  right: 11.0,
+                                  left: 11.0,
+                                  top: 8.0,
+                                  bottom: 8.0),
                             ),
                           ),
                         ),
@@ -111,11 +116,11 @@ class _SearchScreenState extends State<SearchScreen> {
                     children: [
                       Image.asset(
                         "images/desticon.png",
-                        height: 16.0,
-                        width: 16.0,
+                        height: 28.0,
+                        width: 28.0,
                       ),
                       SizedBox(
-                        height: 18.0,
+                        width: 15.0,
                       ),
                       Expanded(
                           child: Container(
@@ -129,12 +134,15 @@ class _SearchScreenState extends State<SearchScreen> {
                             controller: dropOffTextEditingController,
                             decoration: InputDecoration(
                               hintText: "Where To?",
-                              fillColor: Colors.grey[400],
+                              fillColor: Colors.grey[200],
                               filled: true,
                               border: InputBorder.none,
                               isDense: true,
                               contentPadding: EdgeInsets.only(
-                                  left: 11.0, top: 8.0, bottom: 8.0),
+                                  right: 11.0,
+                                  left: 11.0,
+                                  top: 8.0,
+                                  bottom: 8.0),
                             ),
                           ),
                         ),
@@ -147,18 +155,17 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           (placesPredictionList.length > 0)
               ? Expanded(
-                    child: ListView.separated(
-                      itemBuilder: (context, index) => PredictionTile(
-                        placePredictions: placesPredictionList[index],
-                      ),
-                      separatorBuilder: (BuildContext context, int Index) =>
-                          DividerWidget(),
-                      itemCount: placesPredictionList.length,
-                      shrinkWrap: true,
-
-                      physics: ClampingScrollPhysics(),
+                  child: ListView.separated(
+                    itemBuilder: (context, index) => PredictionTile(
+                      placePredictions: placesPredictionList[index],
                     ),
-                  )
+                    separatorBuilder: (BuildContext context, int Index) =>
+                        DividerWidget(),
+                    itemCount: placesPredictionList.length,
+                    shrinkWrap: true,
+                    physics: ClampingScrollPhysics(),
+                  ),
+                )
               : Container(),
         ],
       ),

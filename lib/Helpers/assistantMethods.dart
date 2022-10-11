@@ -71,10 +71,12 @@ class AssistantMethods {
   static Future<DirectDetails?> obtainDirection(
       LatLng initialPos, LatLng finalPos) async {
     String apiUrl =
-        "https://api.geoapify.com/v1/routing?waypoints=$initialPos|$finalPos&mode=drive&details=route_details&apiKey=$geopify";
+        "https://api.geoapify.com/v1/routing?waypoints=${initialPos.latitude},${initialPos.longitude}|${finalPos.latitude},${finalPos.longitude}&mode=drive&details=route_details&apiKey=$geopify";
 
     final requestResponse = await RequestAssistant.receiveRequest(apiUrl);
 
+    print("###URL###");
+    print(apiUrl);
     if (requestResponse != "Error Occurred, Failed. No Response.") {
       DirectDetails directDetails = DirectDetails();
 
@@ -83,8 +85,7 @@ class AssistantMethods {
       directDetails.time = requestResponse["features"][0]["properties"]["time"];
 
       return directDetails;
-    }
-    else{
+    } else {
       return null;
     }
   }

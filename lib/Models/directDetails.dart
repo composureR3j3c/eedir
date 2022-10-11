@@ -1,5 +1,5 @@
 class DirectDetails {
-  double? distance;
+  int? distance;
   double? time;
 
   DirectDetails({this.distance, this.time});
