@@ -88,6 +88,9 @@ class _PredictionTileState extends State<PredictionTile> {
     print("#####drop off #####");
     print(address.placeName);
 
+    setState(() {
+
+    });
     Navigator.pop(context, "obtainDirection");
   }
 }

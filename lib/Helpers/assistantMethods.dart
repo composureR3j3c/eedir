@@ -68,10 +68,10 @@ class AssistantMethods {
         "https://api.geoapify.com/v1/geocode/autocomplete?text=$place&format=json&filter=countrycode:et&circle:-38.763611,9.005401,1&apiKey=$geopify";
   }
 
-  static Future<dynamic> obtainDirection(
+  static Future<DirectDetails?> obtainDirection(
       LatLng initialPos, LatLng finalPos) async {
     String apiUrl =
-        "https://api.geoapify.com/v1/routing?waypoints=47.774732,9.027492|47.789538,9.0549636&mode=bicycle&details=route_details&apiKey=d548c5ed24604be6a9dd0d989631f783";
+        "https://api.geoapify.com/v1/routing?waypoints=$initialPos|$finalPos&mode=drive&details=route_details&apiKey=$geopify";
 
     final requestResponse = await RequestAssistant.receiveRequest(apiUrl);
 
@@ -83,6 +83,9 @@ class AssistantMethods {
       directDetails.time = requestResponse["features"][0]["properties"]["time"];
 
       return directDetails;
+    }
+    else{
+      return null;
     }
   }
 

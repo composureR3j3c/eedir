@@ -32,9 +32,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   var geoLocator = Geolocator();
   late LocationPermission permission;
   double bottomPadding = 0;
-  double rideDetailContainerHeight = 0;
+  double rideDetailContainerHeight = 230;
   double searchContainerHeight = 320;
 
+  bool searchScreen= true;
   late DirectDetails tripDirectDetails;
 
   void displayRideDetail() async {
@@ -104,14 +105,18 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               locatePosition();
             },
           ),
+          (searchScreen==true) ?
           Positioned(
               left: 0.0,
               right: 0.0,
               bottom: 0.0,
-              child: AnimatedSize(
+              child:
+              AnimatedSize(
                 curve: Curves.bounceIn,
                 duration: new Duration(milliseconds: 160),
-                child: Container(
+                child:
+                Container(
+                  width: double.infinity,
                   height: searchContainerHeight,
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -154,12 +159,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                     builder: (context) => SearchScreen()));
                             if (res == "obtainDirection") {
                               await getPlaceDirections();
-                              displayRideDetail();
+                              setState(() {
+                                searchScreen=false;
+                              });
                             }
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Colors.teal,
                                 borderRadius: BorderRadius.circular(5.0),
                                 boxShadow: [
                                   BoxShadow(
@@ -170,13 +177,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                   )
                                 ]),
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(15.0),
                               child: Row(children: [
-                                Icon(Icons.search, color: Colors.teal),
                                 SizedBox(
-                                  width: 10.0,
+                                  width: 20.0,
                                 ),
-                                Text("Search Destination."),
+                                Icon(Icons.search, color: Colors.white,size: 35),
+                                SizedBox(
+                                  width: 20.0,
+                                ),
+                                Text("Search Destination",textAlign: TextAlign.center,style: TextStyle(color: Colors.white,fontSize: 21.0,),),
                               ]),
                             ),
                           ),
@@ -193,7 +203,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                             Column(
                               children: [
                                 Text("Add Work"),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10.0,
                                 ),
                                 Text(
@@ -243,17 +253,19 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
-              )),
+              )
+          ):
           Positioned(
               left: 0.0,
               right: 0.0,
               bottom: 0.0,
               child: AnimatedSize(
                 curve: Curves.bounceIn,
-                duration: new Duration(milliseconds: 160),
+                duration: const Duration(milliseconds: 10),
                 child: Container(
-                  height: rideDetailContainerHeight,
-                  decoration: BoxDecoration(
+                  height: 232,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(18.0),
@@ -271,13 +283,17 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     child: Column(
                       children: [
                         Container(
-                          color: Colors.amber[500],
+
+                          color: Colors.white60,
                           width: double.infinity,
                           child: Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 16.0),
                             child: Row(
                               children: [
+                                SizedBox(
+                                  width: 20.0,
+                                ),
                                 Image.asset(
                                   "images/taxi.png",
                                   height: 70.0,
@@ -286,31 +302,54 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                 SizedBox(
                                   height: 16.0,
                                 ),
-                                Column(
+                                Row(
                                   children: [
-                                    Text(
-                                      "Car",
-                                      style: TextStyle(
-                                          fontSize: 18.2,
-                                          fontFamily: "Brand-Bold"),
+                                    SizedBox(
+                                      width: 20.0,
                                     ),
-                                    Text(
-                                      (tripDirectDetails != null)
-                                          ? tripDirectDetails.distance
-                                              .toString()
-                                          : "5km",
-                                      style: TextStyle(
-                                          fontSize: 18.2,
-                                          fontFamily: "Brand-Bold"),
+                                    CircleAvatar(
+                                      // backgroundColor: Colors.amber,
+                                      radius: 25,
+                                      child: Text(
+                                        "Any Car",
+                                        style: TextStyle(
+                                            fontSize: 12.2,
+                                            fontFamily: "Brand-Bold"),
+                                      ),
                                     ),
-                                    Expanded(
-                                        child: Container(
-                                      child: Text((tripDirectDetails != null)
-                                          ? AssistantMethods.calcualateFares(
-                                                  tripDirectDetails)
-                                              .toString()
-                                          : ""),
-                                    ))
+                                    SizedBox(
+                                      width: 20.0,
+                                    ),
+                                    CircleAvatar(
+                                      radius: 30,
+                                      child: Text(
+                                        // (tripDirectDetails != null)
+                                        //     ? tripDirectDetails.distance
+                                        //         .toString()
+                                        //     :
+                                            "5km",
+                                        style: TextStyle(
+                                            fontSize: 18.2,
+                                            fontFamily: "Brand-Bold"),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 20.0,
+                                    ),
+                                    CircleAvatar(
+                                      radius: 35,
+                                      child:Text(
+                                                // tripDirectDetails != null
+                                                // ? "Br.${AssistantMethods.calcualateFares(
+                                                //         tripDirectDetails)
+                                                //     .toString()}"
+                                                // :
+                                            "Br.100",  style: TextStyle(
+                                                fontSize: 18.2,
+    fontFamily: "Brand-Bold"),),
+
+                                    ),
+
                                   ],
                                 )
                               ],
@@ -397,7 +436,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     var details =
         await AssistantMethods.obtainDirection(pickupLatlng, dropOffLatlng);
     setState(() {
-      tripDirectDetails = details;
+      tripDirectDetails = details!;
     });
     // Navigator.pop(context);
   }
