@@ -81,9 +81,11 @@ class AssistantMethods {
       DirectDetails directDetails = DirectDetails();
 
       directDetails.distance =
-          requestResponse["features"][0]["properties"]["distance"];
-      directDetails.time = requestResponse["features"][0]["properties"]["time"];
+          (requestResponse["features"][0]["properties"]["distance"]/1000).truncate();
+      print("####distance####");
 
+      directDetails.time = requestResponse["features"][0]["properties"]["time"];
+      print(directDetails.distance);
       return directDetails;
     } else {
       return null;
@@ -91,7 +93,7 @@ class AssistantMethods {
   }
 
   static int calcualateFares(DirectDetails directDetails) {
-    double Fare = directDetails.distance! / 100;
+    double Fare = directDetails.distance! *18 +100;
     return Fare.truncate();
   }
 }

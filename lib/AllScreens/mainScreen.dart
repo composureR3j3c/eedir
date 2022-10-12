@@ -37,13 +37,19 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   double searchContainerHeight = 320;
 
   bool searchScreen = true;
-  late DirectDetails tripDirectDetails;
+  late DirectDetails tripDirectDetails = DirectDetails();
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    locatePosition();
+  }
   void displayRideDetail() async {
     // await getDirections();
     setState(() {
       searchContainerHeight = 0;
-      rideDetailContainerHeight = 320;
+      rideDetailContainerHeight = 550;
     });
   }
 
@@ -110,9 +116,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
               locatePosition();
             },
+
             onCameraMove: (position) {
               locatePosition();
+
             },
+
           ),
           // (searchScreen == true)
           //     ?
@@ -154,7 +163,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         Text(
                           "Where to?",
                           style: TextStyle(
-                              fontSize: 20.2, fontFamily: "Brand-Bold"),
+                              fontSize: 20.2, fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
                         ),
                         SizedBox(
                           height: 20.0,
@@ -224,21 +233,17 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                               ),
                               Column(
                                 children: [
-                                  Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text("Add Work")),
+                                  Text("Add Work"),
                                   const SizedBox(
                                     width: 10.0,
                                   ),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
+                                  Text(
                                       "Your Office Address.",
                                       style: TextStyle(
                                           color: Colors.grey[500],
                                           fontSize: 12.0),
                                     ),
-                                  ),
+
                                 ],
                               ),
                             ],
@@ -323,89 +328,352 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         SizedBox(
                           height: 10,
                         ),
-                        Container(
-                          decoration:
+                        Expanded(
+                          child: Column(
+                            children: [Container(
+                              decoration:
                               BoxDecoration(color: Colors.white, boxShadow: [
-                            BoxShadow(
-                              color: Colors.teal,
-                              blurRadius: 1,
-                              spreadRadius: 0.8,
-                              offset: Offset(0.2, 0.2),
-                            )
-                          ]),
-                          // color: Colors.amber,
-                          width: double.infinity,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 30.0),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 20.0,
-                                ),
-                                Image.asset(
-                                  "images/taxi.png",
-                                  height: 70.0,
-                                  width: 80.0,
-                                ),
-                                SizedBox(
-                                  height: 16.0,
-                                ),
-                                Row(
+                                BoxShadow(
+                                  color: Colors.white12,
+                                  blurRadius: 1,
+                                  spreadRadius: 0.8,
+                                  offset: Offset(0.2, 0.2),
+                                )
+                              ]),
+                              // color: Colors.amber,
+                              width: double.infinity,
+                              child: Padding(
+                                padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
+                                child: Row(
                                   children: [
                                     SizedBox(
                                       width: 20.0,
                                     ),
-                                    CircleAvatar(
-                                      backgroundColor: Colors.blueGrey,
-                                      foregroundColor: Colors.white,
-                                      radius: 25,
-                                      child: Text(
-                                        "Any Car",
-                                        style: TextStyle(
-                                            fontSize: 12.2,
-                                            fontFamily: "Brand-Bold"),
-                                      ),
+                                    Image.asset(
+                                      "images/taxi.png",
+                                      height: 70.0,
+                                      width: 80.0,
                                     ),
                                     SizedBox(
-                                      width: 20.0,
+                                      height: 16.0,
                                     ),
-                                    CircleAvatar(
-                                      backgroundColor: Colors.blueGrey,
-                                      foregroundColor: Colors.white,
-                                      radius: 30,
-                                      child: Text(
-                                        (tripDirectDetails != null)
-                                            ? tripDirectDetails.distance
-                                                .toString()
-                                            : "5km",
-                                        style: TextStyle(
-                                            fontSize: 18.2,
-                                            fontFamily: "Brand-Bold"),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 20.0,
-                                    ),
-                                    CircleAvatar(
-                                      backgroundColor: Colors.blueGrey,
-                                      foregroundColor: Colors.white,
-                                      radius: 35,
-                                      child: Text(
-                                        tripDirectDetails != null
-                                            ? "Br.${AssistantMethods.calcualateFares(tripDirectDetails).toString()}"
-                                            : "Br.100",
-                                        style: TextStyle(
-                                            fontSize: 18.2,
-                                            fontFamily: "Brand-Bold"),
-                                      ),
-                                    ),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20.0,
+                                        ),
+                                        CircleAvatar(
+                                          backgroundColor: Colors.white,
+                                          foregroundColor: Colors.black,
+                                          radius: 25,
+                                          child: Text(
+                                            "Any Car",
+                                            style: TextStyle(
+                                                fontSize: 12.2,
+                                                fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 20.0,
+                                        ),
+                                        CircleAvatar(
+                                          backgroundColor: Colors.white12,
+                                          foregroundColor: Colors.black,
+                                          radius: 30,
+                                          child: Text(
+                                            (tripDirectDetails.distance != null)
+                                                ? "${tripDirectDetails.distance
+                                                .toString()} Km"
+                                                :
+                                            "5 km",
+                                            style: TextStyle(
+                                                fontSize: 15.2,
+                                                fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 20.0,
+                                        ),
+                                        CircleAvatar(
+                                          backgroundColor: Colors.white12,
+                                          foregroundColor: Colors.black,
+                                          radius: 35,
+                                          child: Text(
+                                            tripDirectDetails.distance != null
+                                                ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails).toString()}"
+                                                :
+                                            "ETB 100",
+                                            style: TextStyle(
+                                                fontSize: 15.2,
+                                                fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ],
+                                    )
                                   ],
-                                )
-                              ],
+                                ),
+                              ),
                             ),
+                              Container(
+                                decoration:
+                                BoxDecoration(color: Colors.white, boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.white12,
+                                    blurRadius: 1,
+                                    spreadRadius: 0.8,
+                                    offset: Offset(0.2, 0.2),
+                                  )
+                                ]),
+                                // color: Colors.amber,
+                                width: double.infinity,
+                                child: Padding(
+                                  padding:
+                                  const EdgeInsets.symmetric(horizontal: 15.0),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 20.0,
+                                      ),
+                                      Image.asset(
+                                        "images/logo.png",
+                                        height: 70.0,
+                                        width: 80.0,
+                                      ),
+                                      SizedBox(
+                                        height: 16.0,
+                                      ),
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20.0,
+                                          ),
+                                          CircleAvatar(
+                                            backgroundColor: Colors.white,
+                                            foregroundColor: Colors.black,
+                                            radius: 25,
+                                            child: Text(
+                                              "Lada",
+                                              style: TextStyle(
+                                                  fontSize: 12.2,
+                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 20.0,
+                                          ),
+                                          CircleAvatar(
+                                            backgroundColor: Colors.white12,
+                                            foregroundColor: Colors.black,
+                                            radius: 30,
+                                            child: Text(
+                                              (tripDirectDetails.distance != null)
+                                                  ? "${tripDirectDetails.distance
+                                                  .toString()} Km"
+                                                  :
+                                              "5 km",
+                                              style: TextStyle(
+                                                  fontSize: 15.2,
+                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 20.0,
+                                          ),
+                                          CircleAvatar(
+                                            backgroundColor: Colors.white12,
+                                            foregroundColor: Colors.black,
+                                            radius: 35,
+                                            child: Text(
+                                              tripDirectDetails.distance != null
+                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails).toString()}"
+                                                  :
+                                              "ETB 100",
+                                              style: TextStyle(
+                                                  fontSize: 15.2,
+                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                decoration:
+                                BoxDecoration(color: Colors.white, boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.white10,
+                                    blurRadius: 1,
+                                    spreadRadius: 0.8,
+                                    offset: Offset(0.2, 0.2),
+                                  )
+                                ]),
+                                // color: Colors.amber,
+                                width: double.infinity,
+                                child: Padding(
+                                  padding:
+                                  const EdgeInsets.symmetric(horizontal: 15.0),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 20.0,
+                                      ),
+                                      Image.asset(
+                                        "images/automoblie.png",
+                                        height: 70.0,
+                                        width: 80.0,
+                                      ),
+                                      SizedBox(
+                                        height: 16.0,
+                                      ),
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20.0,
+                                          ),
+                                          CircleAvatar(
+                                            backgroundColor: Colors.white,
+                                            foregroundColor: Colors.black,
+                                            radius: 25,
+                                            child: Text(
+                                              "Minivan",
+                                              style: TextStyle(
+                                                  fontSize: 12.2,
+                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 20.0,
+                                          ),
+                                          CircleAvatar(
+                                            backgroundColor: Colors.white12,
+                                            foregroundColor: Colors.black,
+                                            radius: 30,
+                                            child: Text(
+                                              (tripDirectDetails.distance != null)
+                                                  ? "${tripDirectDetails.distance
+                                                  .toString()} Km"
+                                                  :
+                                              "5 km",
+                                              style: TextStyle(
+                                                  fontSize: 15.2,
+                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 20.0,
+                                          ),
+                                          CircleAvatar(
+                                            backgroundColor: Colors.white12,
+                                            foregroundColor: Colors.black,
+                                            radius: 35,
+                                            child: Text(
+                                              tripDirectDetails.distance != null
+                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails).toString()}"
+                                                  :
+                                              "ETB 100",
+                                              style: TextStyle(
+                                                  fontSize: 15.2,
+                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                decoration:
+                                BoxDecoration(color: Colors.white, boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.white12,
+                                    blurRadius: 1,
+                                    spreadRadius: 0.8,
+                                    offset: Offset(0.2, 0.2),
+                                  )
+                                ]),
+                                // color: Colors.amber,
+                                width: double.infinity,
+                                child: Padding(
+                                  padding:
+                                  const EdgeInsets.symmetric(horizontal: 15.0),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 20.0,
+                                      ),
+                                      Image.asset(
+                                        "images/minibus.png",
+                                        height: 70.0,
+                                        width: 80.0,
+                                      ),
+                                      SizedBox(
+                                        height: 16.0,
+                                      ),
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20.0,
+                                          ),
+                                          CircleAvatar(
+                                            backgroundColor: Colors.white,
+                                            foregroundColor: Colors.black,
+                                            radius: 25,
+                                            child: Text(
+                                              "Minibus",
+                                              style: TextStyle(
+                                                  fontSize: 12.2,
+                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 20.0,
+                                          ),
+                                          CircleAvatar(
+                                            backgroundColor: Colors.white12,
+                                            foregroundColor: Colors.black,
+                                            radius: 30,
+                                            child: Text(
+                                              (tripDirectDetails.distance != null)
+                                                  ? "${tripDirectDetails.distance
+                                                  .toString()} Km"
+                                                  :
+                                              "5 km",
+                                              style: TextStyle(
+                                                  fontSize: 15.2,
+                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 20.0,
+                                          ),
+                                          CircleAvatar(
+                                            backgroundColor: Colors.white12,
+                                            foregroundColor: Colors.black,
+                                            radius: 35,
+                                            child: Text(
+                                              tripDirectDetails.distance != null
+                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails).toString()}"
+                                                  :
+                                              "ETB 100",
+                                              style: TextStyle(
+                                                  fontSize: 15.2,
+                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+
                         SizedBox(
                           height: 20.0,
                         ),
@@ -439,7 +707,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                           padding: EdgeInsets.symmetric(horizontal: 50.0),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.green,
+                              primary: Colors.teal,
                               // backgroundColor: Colors.cyan
                             ),
                             // color: Theme.ofdecoration: BoxDecoration(
@@ -483,7 +751,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                           padding: EdgeInsets.symmetric(horizontal: 50.0),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.red,
+                              primary: Colors.red[800],
                               // backgroundColor: Colors.cyan
                             ),
                             onPressed: () {

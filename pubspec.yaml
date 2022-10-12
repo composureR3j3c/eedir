@@ -69,9 +69,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - images/pickicon.png
-    - images/desticon.png
-    - images/taxi.png
+    - images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
