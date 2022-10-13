@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ridee/Helpers/sendMail.dart';
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({Key? key}) : super(key: key);
 
@@ -45,6 +46,7 @@ class DrawerWidget extends StatelessWidget {
               leading: Icon(Icons.help_center),
               title: Text('Support'),
               onTap: () {
+                sendMail();
                 Navigator.pop(context);
                 // Provider.of<Auth>(context, listen: false).logout();
               },

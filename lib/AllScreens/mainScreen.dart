@@ -13,6 +13,8 @@ import 'package:ridee/Provider/appdata.dart';
 import 'package:ridee/Widgets/Divider.dart';
 import 'package:ridee/Widgets/Drawer.dart';
 
+import '../Widgets/Colorize.dart';
+
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
 
@@ -34,6 +36,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   late LocationPermission permission;
   double bottomPadding = 0;
   double rideDetailContainerHeight = 0;
+  double requestHeight =0;
   double searchContainerHeight = 320;
 
   bool searchScreen = true;
@@ -48,6 +51,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   void displayRideDetail() async {
     // await getDirections();
     setState(() {
+      requestHeight =0;
       searchContainerHeight = 0;
       rideDetailContainerHeight = 550;
     });
@@ -56,7 +60,17 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   void displaySearch() async {
     // await getDirections();
     setState(() {
+      requestHeight =0;
       searchContainerHeight = 320;
+      rideDetailContainerHeight = 0;
+    });
+  }
+
+  void displayRequest() async {
+    // await getDirections();
+    setState(() {
+      requestHeight =320;
+      searchContainerHeight = 0;
       rideDetailContainerHeight = 0;
     });
   }
@@ -205,7 +219,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                     width: 20.0,
                                   ),
                                   Align(
-                                    alignment: Alignment.centerLeft,
+                                    alignment: Alignment.center,
                                     child: Text(
                                       "Search Destination",
                                       textAlign: TextAlign.center,
@@ -224,27 +238,29 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                           height: 20.0,
                         ),
                         Align(
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.center,
                           child: Row(
                             children: [
                               Icon(Icons.work, color: Colors.teal),
                               SizedBox(
-                                width: 10.0,
+                                width: 20.0,
                               ),
-                              Column(
-                                children: [
-                                  Text("Add Work"),
-                                  const SizedBox(
-                                    width: 10.0,
-                                  ),
-                                  Text(
-                                      "Your Office Address.",
-                                      style: TextStyle(
-                                          color: Colors.grey[500],
-                                          fontSize: 12.0),
-                                    ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Text("Add Work"),
+                                    // const SizedBox(
+                                    //   height: 10.0,
+                                    // ),
+                                    Text(
+                                        "Your Office Address.",
+                                        style: TextStyle(
+                                            color: Colors.grey[500],
+                                            fontSize: 12.0),
+                                      ),
 
-                                ],
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -260,36 +276,43 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                           children: [
                             Icon(Icons.home, color: Colors.teal),
                             SizedBox(
-                              width: 10.0,
+                              width: 20.0,
                             ),
-                            Column(
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    Provider.of<AppData>(context)
-                                                .userPickUpLocation !=
-                                            null
-                                        ? (Provider.of<AppData>(context)
-                                            .userPickUpLocation!
-                                            .placeName!)
-                                        : "Add Current Location",
-                                    overflow: TextOverflow.ellipsis,
+                            Expanded(
+                              child: Column (
+                                children: [
+                                  Container(
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Expanded(
+                                        child: Text(
+                                          Provider.of<AppData>(context)
+                                                      .userPickUpLocation !=
+                                                  null
+                                              ? (Provider.of<AppData>(context)
+                                                  .userPickUpLocation!
+                                                  .placeName!)
+                                              : "Add Current Location",
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 10.0,
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    "Your Current Address.",
-                                    style: TextStyle(
-                                        color: Colors.grey[500],
-                                        fontSize: 12.0),
+                                  SizedBox(
+                                    width: 10.0,
                                   ),
-                                ),
-                              ],
+                                 Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        "Your Current Address.",
+                                        style: TextStyle(
+                                            color: Colors.grey[500],
+                                            fontSize: 12.0),
+                                      ),
+                                    ),
+
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -723,7 +746,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                             //                           offset: Offset(1, 1),
                             //                         )
                             //                       ]),(context).teal,
-                            onPressed: () {},
+                            onPressed: () {
+                              setState(() {
+                                displayRequest();
+                              });
+
+                            },
                             child: Padding(
                               padding: EdgeInsets.all(17.0),
                               child: Row(
@@ -784,6 +812,51 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   ),
                 ),
               )),
+          Positioned(
+            left: 0.0,
+            right: 0.0,
+            bottom: 0.0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black45,
+
+                    blurRadius: 16.0,
+                    spreadRadius: 0.4,
+                    offset: Offset(1, 1),
+                  )
+                ],
+              ),
+              height:requestHeight,
+              child: Column(
+                children: [
+                  SizedBox(height: 15,),
+                  Colorize(),
+                  SizedBox(height: 22,),
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        displaySearch();
+                      });
+                    },
+                    child: CircleAvatar(
+                        radius: 25.0,
+                        backgroundColor: Colors.teal[300],
+                        child: Icon(Icons.close,size: 26.0,color: Colors.white,)),
+                  ),
+                  SizedBox(height: 10.0),
+                  Text("Cancel Ride",
+                    textAlign: TextAlign.center,style: TextStyle(fontSize: 12.0),
+
+                  )
+                ],
+              ),
+
+            ),
+          ),
         ],
       ),
     );
