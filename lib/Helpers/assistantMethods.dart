@@ -1,10 +1,13 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:ridee/Globals/Global.dart';
+import 'package:ridee/Models/Users.dart';
 import 'package:ridee/Models/address.dart';
 import 'package:ridee/Models/directDetails.dart';
 
-import '../AllScreens/configMaps.dart';
+import '../Globals/configMaps.dart';
 import '../Provider/appdata.dart';
 import 'callApi.dart';
 
@@ -95,5 +98,22 @@ class AssistantMethods {
   static int calcualateFares(DirectDetails directDetails) {
     double Fare = directDetails.distance! *18 +100;
     return Fare.truncate();
+  }
+  static void readCurrentOnlineUserInfo() async
+  {
+    currentFirebaseUser = fAuth.currentUser;
+
+    DatabaseReference userRef = FirebaseDatabase.instance
+        .ref()
+        .child("users")
+        .child(currentFirebaseUser!.uid);
+
+    userRef.once().then((snap)
+    {
+      if(snap.snapshot.value != null)
+      {
+        userModelCurrentInfo = UserModel.fromSnapshot(snap.snapshot);
+      }
+    });
   }
 }

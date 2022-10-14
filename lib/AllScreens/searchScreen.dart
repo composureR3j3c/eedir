@@ -6,7 +6,7 @@ import 'package:ridee/Widgets/Divider.dart';
 
 import '../Provider/appdata.dart';
 import '../Widgets/PredictionTile.dart';
-import 'configMaps.dart';
+import '../Globals/configMaps.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);

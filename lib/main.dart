@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ridee/AllScreens/SplashScreen.dart';
 import 'package:ridee/AllScreens/mainScreen.dart';
 import 'package:ridee/AllScreens/mapSample.dart';
 import 'package:ridee/Provider/appdata.dart';
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.teal,
         ),
         // home: MapSample(),
-        home: MainScreen(),
+        home: const MySplashScreen(),
         debugShowCheckedModeBanner: false,
     ),
       );
