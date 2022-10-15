@@ -60,7 +60,7 @@ class _MySplashScreenState extends State<MySplashScreen>
               const SizedBox(height: 10,),
 
               const Text(
-                "Uber & inDriver Clone App",
+                "Get a lift App",
                 style: TextStyle(
                     fontSize: 24,
                     color: Colors.white,
