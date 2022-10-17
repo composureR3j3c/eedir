@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -84,7 +85,8 @@ class AssistantMethods {
       DirectDetails directDetails = DirectDetails();
 
       directDetails.distance =
-          (requestResponse["features"][0]["properties"]["distance"]/1000).truncate();
+          (requestResponse["features"][0]["properties"]["distance"] / 1000)
+              .truncate();
       print("####distance####");
 
       directDetails.time = requestResponse["features"][0]["properties"]["time"];
@@ -96,11 +98,11 @@ class AssistantMethods {
   }
 
   static int calcualateFares(DirectDetails directDetails) {
-    double Fare = directDetails.distance! *18 +100;
+    double Fare = directDetails.distance! * 18 + 100;
     return Fare.truncate();
   }
-  static void readCurrentOnlineUserInfo() async
-  {
+
+  static void readCurrentOnlineUserInfo() async {
     currentFirebaseUser = fAuth.currentUser;
 
     DatabaseReference userRef = FirebaseDatabase.instance
@@ -108,12 +110,24 @@ class AssistantMethods {
         .child("users")
         .child(currentFirebaseUser!.uid);
 
-    userRef.once().then((snap)
-    {
-      if(snap.snapshot.value != null)
-      {
+    userRef.once().then((snap) {
+      if (snap.snapshot.value != null) {
         userModelCurrentInfo = UserModel.fromSnapshot(snap.snapshot);
       }
     });
   }
+
+  // static void getCurrentOnlineUserInfo() async {
+  //   currentFirebaseUser = fAuth.currentUser;
+  //   String userId = currentFirebaseUser!.uid;
+
+  //   DatabaseReference reference =
+  //       FirebaseDatabase.instance.ref().child("users").child(userId);
+
+  //   reference.once().then((dataSnapshot) {
+  //     if (dataSnapshot.snapshot.value != null) {
+  //       userCurrentInfo = UserModel.fromSnapshot(dataSnapshot.snapshot);
+  //     }
+  //   });
+  // }
 }

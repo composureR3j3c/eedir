@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:ridee/AllScreens/searchScreen.dart';
+import 'package:ridee/Globals/Global.dart';
 import 'package:ridee/Helpers/assistantMethods.dart';
 import 'package:ridee/Models/directDetails.dart';
 import 'package:ridee/Provider/appdata.dart';
@@ -36,7 +38,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   late LocationPermission permission;
   double bottomPadding = 0;
   double rideDetailContainerHeight = 0;
-  double requestHeight =0;
+  double requestHeight = 0;
   double searchContainerHeight = 320;
 
   bool searchScreen = true;
@@ -47,11 +49,48 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     // TODO: implement initState
     super.initState();
     locatePosition();
+    AssistantMethods.readCurrentOnlineUserInfo();
   }
+
+  void saveRideRequest() {
+    DatabaseReference reference =
+        FirebaseDatabase.instance.ref().child("Ride_Request");
+
+    var pickup =
+        Provider.of<AppData>(context, listen: false).userPickUpLocation;
+    var dropOff = Provider.of<AppData>(context, listen: false).dropOffLocation;
+
+    Map pickUpLocMap = {
+      "longitude": pickup?.longitude.toString(),
+      "latitude": pickup?.latitude.toString(),
+    };
+    Map dropOffLocMap = {
+      "longitude": dropOff?.longitude.toString(),
+      "latitude": dropOff?.latitude.toString(),
+    };
+
+    void cancelRideRequest() {
+      reference.remove();
+      displaySearch();
+    }
+
+    Map rideInfoMap = {
+      "driver_id": "waiting",
+      "payment_method": "cash",
+      "pickup": pickUpLocMap,
+      "dropoff": dropOffLocMap,
+      "created_at": DateTime.now().toString(),
+      "rider_name": userModelCurrentInfo?.name,
+      "rider_phone": userModelCurrentInfo?.phone,
+      "pickup_address": pickup?.placeName,
+      "dropoff_address": dropOff?.placeName
+    };
+  }
+
   void displayRideDetail() async {
     // await getDirections();
     setState(() {
-      requestHeight =0;
+      requestHeight = 0;
       searchContainerHeight = 0;
       rideDetailContainerHeight = 550;
     });
@@ -60,7 +99,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   void displaySearch() async {
     // await getDirections();
     setState(() {
-      requestHeight =0;
+      requestHeight = 0;
       searchContainerHeight = 320;
       rideDetailContainerHeight = 0;
     });
@@ -69,10 +108,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   void displayRequest() async {
     // await getDirections();
     setState(() {
-      requestHeight =320;
+      requestHeight = 320;
       searchContainerHeight = 0;
       rideDetailContainerHeight = 0;
     });
+
+    saveRideRequest();
   }
 
   void locatePosition() async {
@@ -130,12 +171,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
               locatePosition();
             },
-
             onCameraMove: (position) {
               locatePosition();
-
             },
-
           ),
           // (searchScreen == true)
           //     ?
@@ -177,7 +215,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         Text(
                           "Where to?",
                           style: TextStyle(
-                              fontSize: 20.2, fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                              fontSize: 20.2,
+                              fontFamily: "Brand-Bold",
+                              fontWeight: FontWeight.bold),
                         ),
                         SizedBox(
                           height: 20.0,
@@ -253,12 +293,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                     //   height: 10.0,
                                     // ),
                                     Text(
-                                        "Your Office Address.",
-                                        style: TextStyle(
-                                            color: Colors.grey[500],
-                                            fontSize: 12.0),
-                                      ),
-
+                                      "Your Office Address.",
+                                      style: TextStyle(
+                                          color: Colors.grey[500],
+                                          fontSize: 12.0),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -279,7 +318,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                               width: 20.0,
                             ),
                             Expanded(
-                              child: Column (
+                              child: Column(
                                 children: [
                                   Container(
                                     child: Align(
@@ -301,16 +340,15 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                   SizedBox(
                                     width: 10.0,
                                   ),
-                                 Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        "Your Current Address.",
-                                        style: TextStyle(
-                                            color: Colors.grey[500],
-                                            fontSize: 12.0),
-                                      ),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "Your Current Address.",
+                                      style: TextStyle(
+                                          color: Colors.grey[500],
+                                          fontSize: 12.0),
                                     ),
-
+                                  ),
                                 ],
                               ),
                             ),
@@ -353,106 +391,110 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         ),
                         Expanded(
                           child: Column(
-                            children: [Container(
-                              decoration:
-                              BoxDecoration(color: Colors.white, boxShadow: [
-                                BoxShadow(
-                                  color: Colors.white12,
-                                  blurRadius: 1,
-                                  spreadRadius: 0.8,
-                                  offset: Offset(0.2, 0.2),
-                                )
-                              ]),
-                              // color: Colors.amber,
-                              width: double.infinity,
-                              child: Padding(
-                                padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                                child: Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 20.0,
-                                    ),
-                                    Image.asset(
-                                      "images/taxi.png",
-                                      height: 70.0,
-                                      width: 80.0,
-                                    ),
-                                    SizedBox(
-                                      height: 16.0,
-                                    ),
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 20.0,
-                                        ),
-                                        CircleAvatar(
-                                          backgroundColor: Colors.white,
-                                          foregroundColor: Colors.black,
-                                          radius: 25,
-                                          child: Text(
-                                            "Any Car",
-                                            style: TextStyle(
-                                                fontSize: 12.2,
-                                                fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 20.0,
-                                        ),
-                                        CircleAvatar(
-                                          backgroundColor: Colors.white12,
-                                          foregroundColor: Colors.black,
-                                          radius: 30,
-                                          child: Text(
-                                            (tripDirectDetails.distance != null)
-                                                ? "${tripDirectDetails.distance
-                                                .toString()} Km"
-                                                :
-                                            "5 km",
-                                            style: TextStyle(
-                                                fontSize: 15.2,
-                                                fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 20.0,
-                                        ),
-                                        CircleAvatar(
-                                          backgroundColor: Colors.white12,
-                                          foregroundColor: Colors.black,
-                                          radius: 35,
-                                          child: Text(
-                                            tripDirectDetails.distance != null
-                                                ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails).toString()}"
-                                                :
-                                            "ETB 100",
-                                            style: TextStyle(
-                                                fontSize: 15.2,
-                                                fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
+                            children: [
                               Container(
-                                decoration:
-                                BoxDecoration(color: Colors.white, boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.white12,
-                                    blurRadius: 1,
-                                    spreadRadius: 0.8,
-                                    offset: Offset(0.2, 0.2),
-                                  )
-                                ]),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.white12,
+                                        blurRadius: 1,
+                                        spreadRadius: 0.8,
+                                        offset: Offset(0.2, 0.2),
+                                      )
+                                    ]),
                                 // color: Colors.amber,
                                 width: double.infinity,
                                 child: Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(horizontal: 15.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 20.0,
+                                      ),
+                                      Image.asset(
+                                        "images/taxi.png",
+                                        height: 70.0,
+                                        width: 80.0,
+                                      ),
+                                      SizedBox(
+                                        height: 16.0,
+                                      ),
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20.0,
+                                          ),
+                                          CircleAvatar(
+                                            backgroundColor: Colors.white,
+                                            foregroundColor: Colors.black,
+                                            radius: 25,
+                                            child: Text(
+                                              "Any Car",
+                                              style: TextStyle(
+                                                  fontSize: 12.2,
+                                                  fontFamily: "Brand-Bold",
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 20.0,
+                                          ),
+                                          CircleAvatar(
+                                            backgroundColor: Colors.white12,
+                                            foregroundColor: Colors.black,
+                                            radius: 30,
+                                            child: Text(
+                                              (tripDirectDetails.distance !=
+                                                      null)
+                                                  ? "${tripDirectDetails.distance.toString()} Km"
+                                                  : "5 km",
+                                              style: TextStyle(
+                                                  fontSize: 15.2,
+                                                  fontFamily: "Brand-Bold",
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 20.0,
+                                          ),
+                                          CircleAvatar(
+                                            backgroundColor: Colors.white12,
+                                            foregroundColor: Colors.black,
+                                            radius: 35,
+                                            child: Text(
+                                              tripDirectDetails.distance != null
+                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails).toString()}"
+                                                  : "ETB 100",
+                                              style: TextStyle(
+                                                  fontSize: 15.2,
+                                                  fontFamily: "Brand-Bold",
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.white12,
+                                        blurRadius: 1,
+                                        spreadRadius: 0.8,
+                                        offset: Offset(0.2, 0.2),
+                                      )
+                                    ]),
+                                // color: Colors.amber,
+                                width: double.infinity,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
                                   child: Row(
                                     children: [
                                       SizedBox(
@@ -479,7 +521,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                               "Lada",
                                               style: TextStyle(
                                                   fontSize: 12.2,
-                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                                  fontFamily: "Brand-Bold",
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                           SizedBox(
@@ -490,14 +533,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                             foregroundColor: Colors.black,
                                             radius: 30,
                                             child: Text(
-                                              (tripDirectDetails.distance != null)
-                                                  ? "${tripDirectDetails.distance
-                                                  .toString()} Km"
-                                                  :
-                                              "5 km",
+                                              (tripDirectDetails.distance !=
+                                                      null)
+                                                  ? "${tripDirectDetails.distance.toString()} Km"
+                                                  : "5 km",
                                               style: TextStyle(
                                                   fontSize: 15.2,
-                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                                  fontFamily: "Brand-Bold",
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                           SizedBox(
@@ -510,11 +553,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                             child: Text(
                                               tripDirectDetails.distance != null
                                                   ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails).toString()}"
-                                                  :
-                                              "ETB 100",
+                                                  : "ETB 100",
                                               style: TextStyle(
                                                   fontSize: 15.2,
-                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                                  fontFamily: "Brand-Bold",
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                         ],
@@ -524,20 +567,21 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                 ),
                               ),
                               Container(
-                                decoration:
-                                BoxDecoration(color: Colors.white, boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.white10,
-                                    blurRadius: 1,
-                                    spreadRadius: 0.8,
-                                    offset: Offset(0.2, 0.2),
-                                  )
-                                ]),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.white10,
+                                        blurRadius: 1,
+                                        spreadRadius: 0.8,
+                                        offset: Offset(0.2, 0.2),
+                                      )
+                                    ]),
                                 // color: Colors.amber,
                                 width: double.infinity,
                                 child: Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(horizontal: 15.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
                                   child: Row(
                                     children: [
                                       SizedBox(
@@ -564,7 +608,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                               "Minivan",
                                               style: TextStyle(
                                                   fontSize: 12.2,
-                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                                  fontFamily: "Brand-Bold",
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                           SizedBox(
@@ -575,14 +620,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                             foregroundColor: Colors.black,
                                             radius: 30,
                                             child: Text(
-                                              (tripDirectDetails.distance != null)
-                                                  ? "${tripDirectDetails.distance
-                                                  .toString()} Km"
-                                                  :
-                                              "5 km",
+                                              (tripDirectDetails.distance !=
+                                                      null)
+                                                  ? "${tripDirectDetails.distance.toString()} Km"
+                                                  : "5 km",
                                               style: TextStyle(
                                                   fontSize: 15.2,
-                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                                  fontFamily: "Brand-Bold",
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                           SizedBox(
@@ -595,11 +640,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                             child: Text(
                                               tripDirectDetails.distance != null
                                                   ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails).toString()}"
-                                                  :
-                                              "ETB 100",
+                                                  : "ETB 100",
                                               style: TextStyle(
                                                   fontSize: 15.2,
-                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                                  fontFamily: "Brand-Bold",
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                         ],
@@ -609,20 +654,21 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                 ),
                               ),
                               Container(
-                                decoration:
-                                BoxDecoration(color: Colors.white, boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.white12,
-                                    blurRadius: 1,
-                                    spreadRadius: 0.8,
-                                    offset: Offset(0.2, 0.2),
-                                  )
-                                ]),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.white12,
+                                        blurRadius: 1,
+                                        spreadRadius: 0.8,
+                                        offset: Offset(0.2, 0.2),
+                                      )
+                                    ]),
                                 // color: Colors.amber,
                                 width: double.infinity,
                                 child: Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(horizontal: 15.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
                                   child: Row(
                                     children: [
                                       SizedBox(
@@ -649,7 +695,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                               "Minibus",
                                               style: TextStyle(
                                                   fontSize: 12.2,
-                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                                  fontFamily: "Brand-Bold",
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                           SizedBox(
@@ -660,14 +707,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                             foregroundColor: Colors.black,
                                             radius: 30,
                                             child: Text(
-                                              (tripDirectDetails.distance != null)
-                                                  ? "${tripDirectDetails.distance
-                                                  .toString()} Km"
-                                                  :
-                                              "5 km",
+                                              (tripDirectDetails.distance !=
+                                                      null)
+                                                  ? "${tripDirectDetails.distance.toString()} Km"
+                                                  : "5 km",
                                               style: TextStyle(
                                                   fontSize: 15.2,
-                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                                  fontFamily: "Brand-Bold",
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                           SizedBox(
@@ -680,11 +727,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                             child: Text(
                                               tripDirectDetails.distance != null
                                                   ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails).toString()}"
-                                                  :
-                                              "ETB 100",
+                                                  : "ETB 100",
                                               style: TextStyle(
                                                   fontSize: 15.2,
-                                                  fontFamily: "Brand-Bold", fontWeight: FontWeight.bold),
+                                                  fontFamily: "Brand-Bold",
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                         ],
@@ -696,7 +743,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                             ],
                           ),
                         ),
-
                         SizedBox(
                           height: 20.0,
                         ),
@@ -750,7 +796,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                               setState(() {
                                 displayRequest();
                               });
-
                             },
                             child: Padding(
                               padding: EdgeInsets.all(17.0),
@@ -819,25 +864,30 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.0),
+                    topRight: Radius.circular(16.0)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black45,
-
                     blurRadius: 16.0,
                     spreadRadius: 0.4,
                     offset: Offset(1, 1),
                   )
                 ],
               ),
-              height:requestHeight,
+              height: requestHeight,
               child: Column(
                 children: [
-                  SizedBox(height: 15,),
+                  SizedBox(
+                    height: 15,
+                  ),
                   Colorize(),
-                  SizedBox(height: 22,),
+                  SizedBox(
+                    height: 22,
+                  ),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       setState(() {
                         displaySearch();
                       });
@@ -845,16 +895,20 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     child: CircleAvatar(
                         radius: 25.0,
                         backgroundColor: Colors.teal[300],
-                        child: Icon(Icons.close,size: 26.0,color: Colors.white,)),
+                        child: Icon(
+                          Icons.close,
+                          size: 26.0,
+                          color: Colors.white,
+                        )),
                   ),
                   SizedBox(height: 10.0),
-                  Text("Cancel Ride",
-                    textAlign: TextAlign.center,style: TextStyle(fontSize: 12.0),
-
+                  Text(
+                    "Cancel Ride",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12.0),
                   )
                 ],
               ),
-
             ),
           ),
         ],
