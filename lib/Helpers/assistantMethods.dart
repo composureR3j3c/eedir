@@ -97,8 +97,17 @@ class AssistantMethods {
     }
   }
 
-  static int calcualateFares(DirectDetails directDetails) {
+  static int calcualateFares(DirectDetails directDetails, String? type) {
     double Fare = directDetails.distance! * 18 + 100;
+    if (type == "lada") {
+      Fare = directDetails.distance! * 12 + 100;
+    }
+    else if (type == "bus") {
+      Fare = directDetails.distance! * 25 + 100;
+    }
+    else if (type == "van") {
+      Fare = directDetails.distance! * 20 + 100;
+    }
     return Fare.truncate();
   }
 

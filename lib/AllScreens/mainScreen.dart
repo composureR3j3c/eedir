@@ -85,6 +85,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       "pickup_address": pickup?.placeName,
       "dropoff_address": dropOff?.placeName
     };
+
+    reference.push().set(rideInfoMap);
   }
 
   void displayRideDetail() async {
@@ -465,7 +467,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                             radius: 35,
                                             child: Text(
                                               tripDirectDetails.distance != null
-                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails).toString()}"
+                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails,"").toString()}"
                                                   : "ETB 100",
                                               style: TextStyle(
                                                   fontSize: 15.2,
@@ -552,7 +554,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                             radius: 35,
                                             child: Text(
                                               tripDirectDetails.distance != null
-                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails).toString()}"
+                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails,"lada").toString()}"
                                                   : "ETB 100",
                                               style: TextStyle(
                                                   fontSize: 15.2,
@@ -639,7 +641,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                             radius: 35,
                                             child: Text(
                                               tripDirectDetails.distance != null
-                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails).toString()}"
+                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails,"van").toString()}"
                                                   : "ETB 100",
                                               style: TextStyle(
                                                   fontSize: 15.2,
@@ -726,7 +728,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                             radius: 35,
                                             child: Text(
                                               tripDirectDetails.distance != null
-                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails).toString()}"
+                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails,"bus").toString()}"
                                                   : "ETB 100",
                                               style: TextStyle(
                                                   fontSize: 15.2,
