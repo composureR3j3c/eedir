@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -10,7 +11,9 @@ import 'package:provider/provider.dart';
 import 'package:ridee/AllScreens/searchScreen.dart';
 import 'package:ridee/Globals/Global.dart';
 import 'package:ridee/Helpers/assistantMethods.dart';
+import 'package:ridee/Helpers/geofireAssistant.dart';
 import 'package:ridee/Models/directDetails.dart';
+import 'package:ridee/Models/nearbyAvailableDrivers.dart';
 import 'package:ridee/Provider/appdata.dart';
 import 'package:ridee/Widgets/Divider.dart';
 import 'package:ridee/Widgets/Drawer.dart';
@@ -43,6 +46,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   bool searchScreen = true;
   late DirectDetails tripDirectDetails = DirectDetails();
+  bool nearbyAvailableDriversKeyLoaded = false;
+  Set<Marker> markerSet = {};
 
   @override
   void initState() {
@@ -146,6 +151,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         setState(() {
           bottomPadding = 300.0;
         });
+        initGeofireListener();
       }
     }
   }
@@ -167,6 +173,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             myLocationEnabled: true,
             zoomControlsEnabled: true,
             zoomGesturesEnabled: true,
+            markers: markerSet,
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
               newGoogleMapController = controller;
@@ -467,7 +474,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                             radius: 35,
                                             child: Text(
                                               tripDirectDetails.distance != null
-                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails,"").toString()}"
+                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails, "").toString()}"
                                                   : "ETB 100",
                                               style: TextStyle(
                                                   fontSize: 15.2,
@@ -554,7 +561,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                             radius: 35,
                                             child: Text(
                                               tripDirectDetails.distance != null
-                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails,"lada").toString()}"
+                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails, "lada").toString()}"
                                                   : "ETB 100",
                                               style: TextStyle(
                                                   fontSize: 15.2,
@@ -641,7 +648,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                             radius: 35,
                                             child: Text(
                                               tripDirectDetails.distance != null
-                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails,"van").toString()}"
+                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails, "van").toString()}"
                                                   : "ETB 100",
                                               style: TextStyle(
                                                   fontSize: 15.2,
@@ -728,7 +735,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                             radius: 35,
                                             child: Text(
                                               tripDirectDetails.distance != null
-                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails,"bus").toString()}"
+                                                  ? "ETB ${AssistantMethods.calcualateFares(tripDirectDetails, "bus").toString()}"
                                                   : "ETB 100",
                                               style: TextStyle(
                                                   fontSize: 15.2,
@@ -939,5 +946,80 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       tripDirectDetails = details!;
     });
     // Navigator.pop(context);
+  }
+
+  void initGeofireListener() {
+    //
+    Geofire.initialize("availableDrivers");
+    Geofire.queryAtLocation(
+            currentPosition.latitude, currentPosition.longitude, 5)
+        ?.listen((map) {
+      print(map);
+      if (map != null) {
+        var callBack = map['callBack'];
+
+        //latitude will be retrieved from map['latitude']
+        //longitude will be retrieved from map['longitude']
+        NearbyAvailableDrivers nearbyAvailableDrivers =
+            NearbyAvailableDrivers();
+        nearbyAvailableDrivers.key = map['key'];
+        nearbyAvailableDrivers.latitude = map['latitude'];
+        nearbyAvailableDrivers.longitude = map['longitude'];
+        switch (callBack) {
+          case Geofire.onKeyEntered:
+            GeoFireAssistant.nearbyAvailableDriversList
+                .add(nearbyAvailableDrivers);
+            if (nearbyAvailableDriversKeyLoaded == true) {
+              updateAvailableDriversNow();
+            }
+            break;
+
+          case Geofire.onKeyExited:
+            GeoFireAssistant.removeDriverFromlist(map['key']);
+            updateAvailableDriversNow();
+            break;
+
+          case Geofire.onKeyMoved:
+            // Update your key's location
+            GeoFireAssistant.updateDriverLocation(nearbyAvailableDrivers);
+            updateAvailableDriversNow();
+            break;
+
+          case Geofire.onGeoQueryReady:
+            // All Intial Data is loaded
+            print(map['result']);
+
+            updateAvailableDriversNow();
+            break;
+        }
+      }
+
+      setState(() {});
+      //
+    });
+  }
+
+  void updateAvailableDriversNow() {
+    setState(() {
+      markerSet.clear();
+    });
+    Set<Marker> tMarkers = Set<Marker>();
+    for (NearbyAvailableDrivers driver
+        in GeoFireAssistant.nearbyAvailableDriversList) {
+      LatLng driverAvailableposition =
+          LatLng(driver.latitude!, driver.longitude!);
+
+      Marker marker = Marker(
+          markerId: MarkerId('driver${driver.key}'),
+          position: driverAvailableposition,
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          rotation: AssistantMethods.createRandomNumber(360));
+
+      tMarkers.add(marker);
+    }
+    setState(() {
+      markerSet = tMarkers;
+    });
   }
 }

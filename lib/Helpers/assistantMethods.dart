@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
@@ -101,11 +103,9 @@ class AssistantMethods {
     double Fare = directDetails.distance! * 18 + 100;
     if (type == "lada") {
       Fare = directDetails.distance! * 12 + 100;
-    }
-    else if (type == "bus") {
+    } else if (type == "bus") {
       Fare = directDetails.distance! * 25 + 100;
-    }
-    else if (type == "van") {
+    } else if (type == "van") {
       Fare = directDetails.distance! * 20 + 100;
     }
     return Fare.truncate();
@@ -139,4 +139,10 @@ class AssistantMethods {
   //     }
   //   });
   // }
+
+  static double createRandomNumber(int num) {
+    var random = Random();
+
+    return (random.nextInt(num).toDouble());
+  }
 }
