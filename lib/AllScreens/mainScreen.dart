@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -48,12 +49,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   late DirectDetails tripDirectDetails = DirectDetails();
   bool nearbyAvailableDriversKeyLoaded = false;
   Set<Marker> markerSet = {};
+  BitmapDescriptor? nearByIcon;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    locatePosition();
+    // locatePosition();
     AssistantMethods.readCurrentOnlineUserInfo();
   }
 
@@ -128,36 +130,38 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
+        return;
       } else if (permission == LocationPermission.deniedForever) {
-      } else {
-        Position position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.high);
-        currentPosition = position;
-
-        LatLng latLngPosition = LatLng(position.latitude, position.longitude);
-
-        CameraPosition cameraPosition = new CameraPosition(
-          target: latLngPosition,
-          zoom: 14.4746,
-        );
-        newGoogleMapController
-            .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-
-        final address =
-            await AssistantMethods.searchAddressForGeographicCoOrdinates(
-                position, context);
-        print("address##############");
-        print(address);
-        setState(() {
-          bottomPadding = 300.0;
-        });
-        initGeofireListener();
+        return;
       }
     }
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    currentPosition = position;
+
+    LatLng latLngPosition = LatLng(position.latitude, position.longitude);
+
+    CameraPosition cameraPosition = new CameraPosition(
+      target: latLngPosition,
+      zoom: 14.4746,
+    );
+    newGoogleMapController
+        .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+
+    final address =
+        await AssistantMethods.searchAddressForGeographicCoOrdinates(
+            position, context);
+    print("address##############");
+    print(address);
+    setState(() {
+      bottomPadding = 300.0;
+    });
+    initGeofireListener();
   }
 
   @override
   Widget build(BuildContext context) {
+    createIconMarker();
     return Scaffold(
       appBar: AppBar(
         title: Text(""),
@@ -181,11 +185,47 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               locatePosition();
             },
             onCameraMove: (position) {
-              locatePosition();
+              // locatePosition();
             },
           ),
-          // (searchScreen == true)
-          //     ?
+          Positioned(
+            top: 10.0,
+            left: 0.0,
+            right: 0.0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      locatePosition();
+                      Fluttertoast.showToast(msg: "New location being fetched");
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Relocate",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                          ),
+                          const Icon(Icons.pin_drop,
+                              color: Colors.white, size: 20.0),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           Positioned(
               left: 0.0,
               right: 0.0,
@@ -1012,8 +1052,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       Marker marker = Marker(
           markerId: MarkerId('driver${driver.key}'),
           position: driverAvailableposition,
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          icon: 
+          // nearByIcon!,
+          // ??
+          BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
           rotation: AssistantMethods.createRandomNumber(360));
 
       tMarkers.add(marker);
@@ -1021,5 +1063,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     setState(() {
       markerSet = tMarkers;
     });
+  }
+
+  void createIconMarker() {
+    if (nearByIcon == null) {
+      ImageConfiguration imageConfiguration =
+          createLocalImageConfiguration(context, size: const Size(2, 2));
+      BitmapDescriptor.fromAssetImage(
+              imageConfiguration, "/images/car_android.png")
+          .then((value) => nearByIcon = value);
+      print("icon created#####");
+    }
   }
 }
