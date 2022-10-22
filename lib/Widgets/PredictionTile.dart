@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ridee/Globals/Global.dart';
 import 'package:ridee/Models/address.dart';
 import 'package:ridee/Models/placePrediction.dart';
 import 'package:ridee/Provider/appdata.dart';
@@ -102,7 +103,9 @@ class _PredictionTileState extends State<PredictionTile> {
     print("#####drop off #####");
     print(address.latitude);
 
-    setState(() {});
+    setState(() {
+      userDropOffAddress = placePredictions.mainText!;
+    });
     Navigator.pop(context, "obtainDirection");
   }
 }

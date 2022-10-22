@@ -44,6 +44,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   double rideDetailContainerHeight = 0;
   double requestHeight = 0;
   double searchContainerHeight = 320;
+  DatabaseReference? referenceRideRequest;
 
   bool searchScreen = true;
   late DirectDetails tripDirectDetails = DirectDetails();
@@ -60,8 +61,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   void saveRideRequest() {
-    DatabaseReference reference =
-        FirebaseDatabase.instance.ref().child("Ride_Request");
+    referenceRideRequest =
+        FirebaseDatabase.instance.ref().child("Ride_Request").push();
 
     var pickup =
         Provider.of<AppData>(context, listen: false).userPickUpLocation;
@@ -77,7 +78,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     };
 
     void cancelRideRequest() {
-      reference.remove();
+      referenceRideRequest!.remove();
       displaySearch();
     }
 
@@ -93,7 +94,48 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       "dropoff_address": dropOff?.placeName
     };
 
-    reference.push().set(rideInfoMap);
+    referenceRideRequest!.set(rideInfoMap);
+
+    sendNotificationToDriverNow("jcS8TT7Gz2grlRmYeUXlLpbJ5ek2");
+  }
+
+  sendNotificationToDriverNow(String chosenDriverId) {
+    //assign/SET rideRequestId to newRideStatus in
+    // Drivers Parent node for that specific choosen driver
+    // FirebaseDatabase.instance.ref()
+    //     .child("drivers")
+    //     .child(chosenDriverId)
+    //     .child("newRideStatus")
+    //     .set(referenceRideRequest!.key);
+
+    //automate the push notification service
+    print("##notification send##");
+    FirebaseDatabase.instance
+        .ref()
+        .child("drivers")
+        .child(chosenDriverId)
+        .child("token")
+        .once()
+        .then((snap) {
+      if (snap.snapshot.value != null) {
+        String deviceRegistrationToken = snap.snapshot.value.toString();
+
+        //send Notification Now
+        AssistantMethods.sendNotificationToDriverNow(
+          deviceRegistrationToken,
+          referenceRideRequest!.key.toString(),
+          context,
+        );
+        print("############notification send##");
+        print(referenceRideRequest!.key.toString());
+        print("#############notification send##");
+
+        Fluttertoast.showToast(msg: "Notification sent Successfully.");
+      } else {
+        Fluttertoast.showToast(msg: "Please choose another driver.");
+        return;
+      }
+    });
   }
 
   void displayRideDetail() async {
@@ -550,7 +592,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                         width: 20.0,
                                       ),
                                       Image.asset(
-                                        "images/logo.png",
+                                        "images/logo2.png",
                                         height: 70.0,
                                         width: 80.0,
                                       ),
@@ -1052,10 +1094,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       Marker marker = Marker(
           markerId: MarkerId('driver${driver.key}'),
           position: driverAvailableposition,
-          icon: 
-          // nearByIcon!,
-          // ??
-          BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          icon:
+              // nearByIcon!,
+              // ??
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
           rotation: AssistantMethods.createRandomNumber(360));
 
       tMarkers.add(marker);
