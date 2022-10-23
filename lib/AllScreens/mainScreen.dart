@@ -41,10 +41,15 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   var geoLocator = Geolocator();
   late LocationPermission permission;
   double bottomPadding = 0;
+  double assignedDriverInfoContainerHeight = 0;
   double rideDetailContainerHeight = 0;
   double requestHeight = 0;
   double searchContainerHeight = 320;
   DatabaseReference? referenceRideRequest;
+
+  String driverRideStatus = "Driver is Coming";
+  StreamSubscription<DatabaseEvent>? tripRideRequestInfoStreamSubscription;
+  String userRideRequestStatus = "";
 
   bool searchScreen = true;
   late DirectDetails tripDirectDetails = DirectDetails();
@@ -58,6 +63,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     super.initState();
     // locatePosition();
     AssistantMethods.readCurrentOnlineUserInfo();
+  }
+
+  void cancelRideRequest() {
+    referenceRideRequest!.remove();
+    displaySearch();
   }
 
   void saveRideRequest() {
@@ -77,11 +87,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       "latitude": dropOff?.latitude.toString(),
     };
 
-    void cancelRideRequest() {
-      referenceRideRequest!.remove();
-      displaySearch();
-    }
-
     Map rideInfoMap = {
       "driver_id": "waiting",
       "payment_method": "cash",
@@ -95,8 +100,98 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     };
 
     referenceRideRequest!.set(rideInfoMap);
+    tripRideRequestInfoStreamSubscription =
+        referenceRideRequest!.onValue.listen((eventSnap) {
+      if (eventSnap.snapshot.value == null) {
+        return;
+      }
+
+      if ((eventSnap.snapshot.value as Map)["car_details"] != null) {
+        setState(() {
+          driverCarDetails =
+              (eventSnap.snapshot.value as Map)["car_details"].toString();
+        });
+      }
+
+      if ((eventSnap.snapshot.value as Map)["driverPhone"] != null) {
+        setState(() {
+          driverPhone =
+              (eventSnap.snapshot.value as Map)["driverPhone"].toString();
+        });
+      }
+
+      if ((eventSnap.snapshot.value as Map)["driverName"] != null) {
+        setState(() {
+          driverName =
+              (eventSnap.snapshot.value as Map)["driverName"].toString();
+        });
+      }
+      if ((eventSnap.snapshot.value as Map)["status"] != null) {
+        userRideRequestStatus =
+            (eventSnap.snapshot.value as Map)["status"].toString();
+      }
+      if (userRideRequestStatus == "accepted") {
+        setState(() {
+          showUIForAssignedDriverInfo();
+          driverRideStatus = "Driver is Coming";
+        });
+      }
+      if (userRideRequestStatus == "arrived") {
+        setState(() {
+          driverRideStatus = "Driver has Arrived";
+        });
+      }
+
+      if (userRideRequestStatus == "ontrip") {
+        setState(() {
+          driverRideStatus = "Going towards Destination";
+        });
+      }
+      if (userRideRequestStatus == "ended") {
+        setState(() {
+          driverRideStatus = "Trip has Ended Time to Pay";
+        });
+      }
+    });
 
     sendNotificationToDriverNow("jcS8TT7Gz2grlRmYeUXlLpbJ5ek2");
+
+    FirebaseDatabase.instance
+        .ref()
+        .child("drivers")
+        .child("jcS8TT7Gz2grlRmYeUXlLpbJ5ek2")
+        .child("newRide")
+        .onValue
+        .listen((eventSnapshot) {
+      //1. driver has cancel the rideRequest :: Push Notification
+      // (newRideStatus = idle)
+      // if (eventSnapshot.snapshot.value == "idle") {
+      //   Fluttertoast.showToast(
+      //       msg:
+      //           "The driver has cancelled your request. Please choose another driver.");
+      //
+      //   Future.delayed(const Duration(milliseconds: 3000), () {
+      //     Fluttertoast.showToast(msg: "Please Restart App Now.");
+      //     Navigator.pop(context);
+      //   });
+      // }
+
+      //2. driver has accept the rideRequest :: Push Notification
+      // (newRideStatus = accepted)
+      if (eventSnapshot.snapshot.value == "accepted") {
+        //design and display ui for displaying assigned driver information
+        // showUIForAssignedDriverInfo();
+      }
+    });
+  }
+
+  showUIForAssignedDriverInfo() {
+    setState(() {
+      rideDetailContainerHeight = 0;
+      searchContainerHeight = 0;
+      requestHeight = 0;
+      assignedDriverInfoContainerHeight = 300;
+    });
   }
 
   sendNotificationToDriverNow(String chosenDriverId) {
@@ -144,6 +239,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       requestHeight = 0;
       searchContainerHeight = 0;
       rideDetailContainerHeight = 550;
+      assignedDriverInfoContainerHeight = 0;
     });
   }
 
@@ -153,6 +249,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       requestHeight = 0;
       searchContainerHeight = 320;
       rideDetailContainerHeight = 0;
+      assignedDriverInfoContainerHeight = 0;
     });
   }
 
@@ -162,6 +259,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       requestHeight = 320;
       searchContainerHeight = 0;
       rideDetailContainerHeight = 0;
+      assignedDriverInfoContainerHeight = 0;
     });
 
     saveRideRequest();
@@ -244,7 +342,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       Fluttertoast.showToast(msg: "New location being fetched");
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      primary: Colors.green,
+                      // backgroundColor: Colors.green,
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -920,7 +1019,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                             ),
                             onPressed: () {
                               setState(() {
-                                displaySearch();
+                                cancelRideRequest();
                               });
                             },
                             child: Padding(
@@ -999,6 +1098,144 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     style: TextStyle(fontSize: 12.0),
                   )
                 ],
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: assignedDriverInfoContainerHeight,
+              decoration: const BoxDecoration(
+                color: Colors.black87,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(20),
+                  topLeft: Radius.circular(20),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 20,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    //status of ride
+                    Center(
+                      child: Text(
+                        driverRideStatus,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white54,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(
+                      height: 20.0,
+                    ),
+
+                    const Divider(
+                      height: 2,
+                      thickness: 2,
+                      color: Colors.white54,
+                    ),
+
+                    const SizedBox(
+                      height: 20.0,
+                    ),
+
+                    //driver vehicle details
+                    Text(
+                      driverCarDetails,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white54,
+                      ),
+                    ),
+
+                    const SizedBox(
+                      height: 2.0,
+                    ),
+
+                    //driver name
+                    Text(
+                      driverName,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white54,
+                      ),
+                    ),
+
+                    const SizedBox(
+                      height: 20.0,
+                    ),
+
+                    const Divider(
+                      height: 2,
+                      thickness: 2,
+                      color: Colors.white54,
+                    ),
+
+                    const SizedBox(
+                      height: 20.0,
+                    ),
+
+                    //call driver button
+                    Center(
+                      child: ElevatedButton.icon(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.green,
+                        ),
+                        icon: const Icon(
+                          Icons.phone_android,
+                          color: Colors.black54,
+                          size: 22,
+                        ),
+                        label: const Text(
+                          "Call Driver",
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 5.0,
+                    ),
+
+                    Center(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          displaySearch();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.red,
+                        ),
+                        icon: const Icon(
+                          Icons.stop_circle_outlined,
+                          color: Colors.black54,
+                          size: 22,
+                        ),
+                        label: const Text(
+                          "Cancel",
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
