@@ -44,7 +44,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   double assignedDriverInfoContainerHeight = 0;
   double rideDetailContainerHeight = 0;
   double requestHeight = 0;
-  double searchContainerHeight = 220;
+  double searchContainerHeight = 200;
   DatabaseReference? referenceRideRequest;
 
   String driverRideStatus = "Driver is Coming";
@@ -247,7 +247,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     // await getDirections();
     setState(() {
       requestHeight = 0;
-      searchContainerHeight = 220;
+      searchContainerHeight = 200;
       rideDetailContainerHeight = 0;
       assignedDriverInfoContainerHeight = 0;
     });
@@ -400,7 +400,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         ),
                         Text(
                           "Hi, hope you're doing well!",
-                          style: TextStyle(fontSize: 12.2),
+                          style: TextStyle(fontSize: 12.2, color :Colors.white),
                         ),
                         Text(
                           "Where to?",
@@ -464,86 +464,53 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                             ),
                           ),
                         ),
+                       
                         // SizedBox(
-                        //   height: 20.0,
+                        //   height: 16.0,
                         // ),
-                        // Align(
-                        //   alignment: Alignment.center,
-                        //   child: Row(
-                        //     children: [
-                        //       Icon(Icons.work, color: Colors.teal),
-                        //       SizedBox(
-                        //         width: 20.0,
-                        //       ),
-                        //       Expanded(
-                        //         child: Column(
-                        //           children: [
-                        //             Text("Add Work"),
-                        //             // const SizedBox(
-                        //             //   height: 10.0,
-                        //             // ),
-                        //             Text(
-                        //               "Your Office Address.",
+                        // Row(
+                        //   children: [
+                        //     Icon(Icons.home, color: Colors.teal),
+                        //     SizedBox(
+                        //       width: 20.0,
+                        //     ),
+                        //     Expanded(
+                        //       child: Column(
+                        //         children: [
+                        //           Container(
+                        //             child: Align(
+                        //               alignment: Alignment.center,
+                        //               child: Expanded(
+                        //                 child: Text(
+                        //                   Provider.of<AppData>(context)
+                        //                               .userPickUpLocation !=
+                        //                           null
+                        //                       ? (Provider.of<AppData>(context)
+                        //                           .userPickUpLocation!
+                        //                           .placeName!)
+                        //                       : "Add Current Location",
+                        //                   overflow: TextOverflow.ellipsis,
+                        //                 ),
+                        //               ),
+                        //             ),
+                        //           ),
+                        //           SizedBox(
+                        //             width: 10.0,
+                        //           ),
+                        //           Align(
+                        //             alignment: Alignment.center,
+                        //             child: Text(
+                        //               "Your Current Address.",
                         //               style: TextStyle(
                         //                   color: Colors.grey[500],
                         //                   fontSize: 12.0),
                         //             ),
-                        //           ],
-                        //         ),
+                        //           ),
+                        //         ],
                         //       ),
-                        //     ],
-                        //   ),
+                        //     ),
+                        //   ],
                         // ),
-                        // SizedBox(
-                        //   height: 10.0,
-                        // ),
-                        DividerWidget(),
-                        SizedBox(
-                          height: 16.0,
-                        ),
-                        Row(
-                          children: [
-                            Icon(Icons.home, color: Colors.teal),
-                            SizedBox(
-                              width: 20.0,
-                            ),
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Expanded(
-                                        child: Text(
-                                          Provider.of<AppData>(context)
-                                                      .userPickUpLocation !=
-                                                  null
-                                              ? (Provider.of<AppData>(context)
-                                                  .userPickUpLocation!
-                                                  .placeName!)
-                                              : "Add Current Location",
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 10.0,
-                                  ),
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      "Your Current Address.",
-                                      style: TextStyle(
-                                          color: Colors.grey[500],
-                                          fontSize: 12.0),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                   ),
