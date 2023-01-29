@@ -44,7 +44,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   double assignedDriverInfoContainerHeight = 0;
   double rideDetailContainerHeight = 0;
   double requestHeight = 0;
-  double searchContainerHeight = 320;
+  double searchContainerHeight = 220;
   DatabaseReference? referenceRideRequest;
 
   String driverRideStatus = "Driver is Coming";
@@ -154,12 +154,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       }
     });
 
-    sendNotificationToDriverNow("jcS8TT7Gz2grlRmYeUXlLpbJ5ek2");
+    sendNotificationToDriverNow("7j11klugrzgvwrAHyvJp38woWIf1");
 
     FirebaseDatabase.instance
         .ref()
         .child("drivers")
-        .child("jcS8TT7Gz2grlRmYeUXlLpbJ5ek2")
+        .child("7j11klugrzgvwrAHyvJp38woWIf1")
         .child("newRide")
         .onValue
         .listen((eventSnapshot) {
@@ -247,7 +247,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     // await getDirections();
     setState(() {
       requestHeight = 0;
-      searchContainerHeight = 320;
+      searchContainerHeight = 220;
       rideDetailContainerHeight = 0;
       assignedDriverInfoContainerHeight = 0;
     });
@@ -378,7 +378,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   width: double.infinity,
                   height: searchContainerHeight,
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.black87,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(18.0),
                           topRight: Radius.circular(18.0)),
@@ -464,39 +464,39 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        Align(
-                          alignment: Alignment.center,
-                          child: Row(
-                            children: [
-                              Icon(Icons.work, color: Colors.teal),
-                              SizedBox(
-                                width: 20.0,
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Text("Add Work"),
-                                    // const SizedBox(
-                                    //   height: 10.0,
-                                    // ),
-                                    Text(
-                                      "Your Office Address.",
-                                      style: TextStyle(
-                                          color: Colors.grey[500],
-                                          fontSize: 12.0),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
+                        // SizedBox(
+                        //   height: 20.0,
+                        // ),
+                        // Align(
+                        //   alignment: Alignment.center,
+                        //   child: Row(
+                        //     children: [
+                        //       Icon(Icons.work, color: Colors.teal),
+                        //       SizedBox(
+                        //         width: 20.0,
+                        //       ),
+                        //       Expanded(
+                        //         child: Column(
+                        //           children: [
+                        //             Text("Add Work"),
+                        //             // const SizedBox(
+                        //             //   height: 10.0,
+                        //             // ),
+                        //             Text(
+                        //               "Your Office Address.",
+                        //               style: TextStyle(
+                        //                   color: Colors.grey[500],
+                        //                   fontSize: 12.0),
+                        //             ),
+                        //           ],
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   height: 10.0,
+                        // ),
                         DividerWidget(),
                         SizedBox(
                           height: 16.0,
