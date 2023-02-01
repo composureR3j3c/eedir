@@ -18,6 +18,8 @@ import 'package:ridee/Models/nearbyAvailableDrivers.dart';
 import 'package:ridee/Provider/appdata.dart';
 import 'package:ridee/Widgets/Divider.dart';
 import 'package:ridee/Widgets/Drawer.dart';
+import 'package:ridee/Widgets/DropDown.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 import '../Widgets/Colorize.dart';
 
@@ -165,16 +167,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         .listen((eventSnapshot) {
       //1. driver has cancel the rideRequest :: Push Notification
       // (newRideStatus = idle)
-      // if (eventSnapshot.snapshot.value == "idle") {
-      //   Fluttertoast.showToast(
-      //       msg:
-      //           "The driver has cancelled your request. Please choose another driver.");
-      //
-      //   Future.delayed(const Duration(milliseconds: 3000), () {
-      //     Fluttertoast.showToast(msg: "Please Restart App Now.");
-      //     Navigator.pop(context);
-      //   });
-      // }
+      if (eventSnapshot.snapshot.value == "idle") {
+        Fluttertoast.showToast(
+            msg:
+                "The driver has cancelled your request. please request again.");
+
+        //   Future.delayed(const Duration(milliseconds: 3000), () {
+        //     Fluttertoast.showToast(msg: "Please Restart App Now.");
+        Navigator.pop(context);
+        //   });
+      }
 
       //2. driver has accept the rideRequest :: Push Notification
       // (newRideStatus = accepted)
@@ -238,7 +240,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     setState(() {
       requestHeight = 0;
       searchContainerHeight = 0;
-      rideDetailContainerHeight = 550;
+      rideDetailContainerHeight = 570;
       assignedDriverInfoContainerHeight = 0;
     });
   }
@@ -265,6 +267,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     saveRideRequest();
   }
 
+  void callNumber() async {
+    const number = '0912356845'; //set the number here
+    await FlutterPhoneDirectCaller.callNumber(number);
+  }
+
   void locatePosition() async {
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -275,6 +282,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         return;
       }
     }
+
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     currentPosition = position;
@@ -400,7 +408,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         ),
                         Text(
                           "Hi, hope you're doing well!",
-                          style: TextStyle(fontSize: 12.2, color :Colors.white),
+                          style: TextStyle(fontSize: 12.2, color: Colors.white),
                         ),
                         Text(
                           "Where to?",
@@ -464,7 +472,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                             ),
                           ),
                         ),
-                       
+
                         // SizedBox(
                         //   height: 16.0,
                         // ),
@@ -914,15 +922,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                               SizedBox(
                                 width: 16.0,
                               ),
-                              Text("Cash"),
+                              // Text("Cash"),
+                              DropdownButtonCash(),
                               SizedBox(
                                 height: 6.0,
                               ),
-                              Icon(
-                                Icons.keyboard_arrow_down,
-                                color: Colors.black54,
-                                size: 16.0,
-                              )
+                              // Icon(
+                              //   Icons.keyboard_arrow_down,
+                              //   color: Colors.black54,
+                              //   size: 16.0,
+                              // )
                             ],
                           ),
                         ),
@@ -1157,7 +1166,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     //call driver button
                     Center(
                       child: ElevatedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          callNumber();
+                        },
                         style: ElevatedButton.styleFrom(
                           primary: Colors.green,
                         ),

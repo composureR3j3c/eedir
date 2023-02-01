@@ -35,6 +35,14 @@ class DrawerWidget extends StatelessWidget {
                 // Navigator.pushReplacementNamed(context, OrdersScreen.routeName);
               },
             ),
+             Divider(),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text('Pre-Order'),
+              onTap: () {
+                // Navigator.pushReplacementNamed(context, OrdersScreen.routeName);
+              },
+            ),
             Divider(),
             ListTile(
               leading: Icon(Icons.info),
